@@ -4,3 +4,13 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+winapi = { version = "0.3", features = ["processthreadsapi", "winbase", "winuser"] }
+
+[target.'cfg(windows)'.build-dependencies]
+winres = "0.1"
+
+[[bin]]
+name = "mihomo-party-run"
+path = "src/main.rs"
+
+
