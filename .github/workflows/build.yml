@@ -1,0 +1,40 @@
+name: Build
+
+on: workflow_dispatch
+permissions: write-all
+
+jobs:
+  release-update:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: x86_64-pc-windows-msvc
+            arch: x64
+          - target: i686-pc-windows-msvc
+            arch: ia32
+          - target: aarch64-pc-windows-msvc
+            arch: arm64
+    runs-on: windows-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+      - name: Add Rust Target
+        run: rustup target add ${{ matrix.target }}
+      - name: Build
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Update Tag
+        uses: richardsimko/update-tag@v1
+        with:
+          tag_name: ${{ matrix.arch }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ matrix.arch }}
+          tag_name: ${{ matrix.arch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          files: target/${{ matrix.target }}/release/mihomo-party-run.exe
