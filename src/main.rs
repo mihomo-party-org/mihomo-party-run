@@ -28,7 +28,7 @@ fn run() -> Result<(), Box<dyn std::error::Error>> {
     let mut cmd = Command::new(&args[1]);
     cmd.arg(params);
     if let Err(e) = cmd.spawn() {
-        return Err(format!("Failed to start program\n{}\n{}\n{}", e, &args[1], params).into());
+        return Err(format!("Failed to start program\n{}\n{}\n请尝试以管理员权限启动软件", e, &args[1]).into());
     }
     Ok(())
 }
