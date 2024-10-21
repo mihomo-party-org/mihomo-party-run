@@ -9,22 +9,25 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-pc-windows-msvc
-            arch: x64
-          - target: i686-pc-windows-msvc
-            arch: ia32
-          - target: aarch64-pc-windows-msvc
-            arch: arm64
+          - arch: "x64"
+            goarch: "amd64"
+          - arch: "ia32"
+            goarch: "386"
+          - arch: "arm64"
+            goarch: "arm64"
     runs-on: windows-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      - name: Install Rust
-        uses: dtolnay/rust-toolchain@1.77
-      - name: Add Rust Target
-        run: rustup target add ${{ matrix.target }}
+      - name: Install Golang
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.20"
       - name: Build
-        run: cargo build --release --target ${{ matrix.target }}
+        env:
+          GOOS: windows
+          GOARCH: ${{ matrix.goarch }}
+        run: go build -ldflags "-H windowsgui" -o mihomo-party-run.exe
       - name: Update Tag
         uses: richardsimko/update-tag@v1
         with:
@@ -37,4 +40,4 @@ jobs:
           name: ${{ matrix.arch }}
           tag_name: ${{ matrix.arch }}
           token: ${{ secrets.GITHUB_TOKEN }}
-          files: target/${{ matrix.target }}/release/mihomo-party-run.exe
+          files: mihomo-party-run.exe
