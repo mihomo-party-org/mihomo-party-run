@@ -15,7 +15,7 @@ jobs:
             goarch: "386"
           - arch: "arm64"
             goarch: "arm64"
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -26,6 +26,7 @@ jobs:
       - name: Build
         env:
           GOOS: windows
+          GOAMD64: v1
           GOARCH: ${{ matrix.goarch }}
         run: go build -ldflags "-H windowsgui" -o mihomo-party-run.exe
       - name: Update Tag
